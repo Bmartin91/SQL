@@ -1,0 +1,31 @@
+public static bool SaveEstimateItems(Estimate e)
+{
+	try
+	{
+		using (SqlCeConnection connection = new SqlCeConnection(connectionString))
+		{
+			connection.Open();
+
+			foreach (EstimateItems estItm in e.Items)
+			{
+				using (SqlCeCommand input = new SqlCeCommand("INSERT INTO Estimate_Items_tbl (Estimate_ID, Part, Price, Labor, Quantity) VALUES (@est, @part, @price, @labor, @quant)", connection))
+				{
+					input.Parameters.AddWithValue("@est", estItm.EstimateID);
+					input.Parameters.AddWithValue("@part", estItm.Part);
+					input.Parameters.AddWithValue("@price", estItm.Price);
+					input.Parameters.AddWithValue("@labor", estItm.Labor);
+					input.Parameters.AddWithValue("@quant", estItm.Quantity);
+					input.ExecuteNonQuery();
+				}
+			}
+		}
+	}
+
+	catch (Exception ex)
+	{
+		MessageBox.Show(ex.Message, "Error saving estimate items", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		return false;
+	}
+
+	return true;
+}
